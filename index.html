@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dignus Legal Chambers - Staff Workspace</title>
+  <style>
+    /* Core Theme: dignusworkflow2026 - Clean White Professional Theme */
+    :root {
+      --navy: #06112a;
+      --gold: #d4af37;
+      --bg-page: #f4f7f6; 
+      --bg-card: #ffffff;
+      --text-main: #333333;
+      --border-light: #e0e0e0;
+      
+      /* Dynamic Priority Colors */
+      --priority-high: #ff4d4d;
+      --priority-medium: #ffbe1a;
+      --priority-low: #2ecc71;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .dash-wrap { 
+      max-width: 1100px; 
+      margin: 0 auto; 
+      padding: 40px 20px; 
+      background: transparent; 
+      box-sizing: border-box;
+    }
+    
+    .main-heading { 
+      font-size: 38px; 
+      font-weight: 900; 
+      color: var(--navy); 
+      margin-bottom: 30px; 
+      margin-top: 0; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+    }
+    
+    .welcome-box, .invite-box {
+      background: var(--bg-card);
+      border: none; 
+      border-radius: 12px;
+      padding: 30px 35px;
+      margin-bottom: 24px;
+      color: var(--navy);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); 
+    }
+
+    .welcome-box h3, .invite-box h3 { 
+      color: var(--navy); 
+      margin-top: 0; 
+      margin-bottom: 10px;
+      text-transform: uppercase; 
+      font-size: 22px; 
+      letter-spacing: 1px; 
+      font-weight: 800;
+    }
+
+    .invite-inputs { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 15px; }
+    .invite-inputs input {
+      flex: 1; padding: 14px; background: #fdfdfd; border: 1px solid var(--border-light); color: var(--navy); border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s;
+    }
+    .invite-inputs input:focus { border-color: var(--gold); }
+    
+    #sendInviteBtn { 
+      padding: 14px 30px; background: var(--navy); color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 6px; transition: 0.3s; text-transform: uppercase;
+    }
+    #sendInviteBtn:hover { background: var(--gold); }
+
+    /* DYNAMIC POPUP MODAL ARCHITECTURE */
+    .alert-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(6, 17, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .alert-modal-overlay.active {
+      opacity: 1; pointer-events: auto;
+    }
+    .alert-modal-card {
+      background: white; width: 100%; max-width: 600px; border-radius: 14px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); transform: translateY(-20px); transition: transform 0.3s ease;
+    }
+    .alert-modal-overlay.active .alert-modal-card {
+      transform: translateY(0);
+    }
+    .alert-modal-header {
+      display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--navy); padding-bottom: 12px; margin-bottom: 20px;
+    }
+    .alert-modal-header h3 {
+      margin: 0; color: var(--navy); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; font-size: 20px;
+    }
+    .alert-modal-close-icon {
+      font-size: 24px; cursor: pointer; color: #999; transition: 0.2s;
+    }
+    .alert-modal-close-icon:hover { color: var(--navy); }
+    
+    .modal-scroll-area {
+      max-height: 350px; overflow-y: auto; padding-right: 5px;
+    }
+
+    .alert-item { 
+      padding: 18px 20px; margin-bottom: 14px; background: #fcfbfa; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border: 1px solid #f0f0f0; box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    
+    .alert-link { 
+      color: var(--navy); text-decoration: none; font-weight: bold; border: 2px solid var(--navy); padding: 10px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: 0.2s ease; background: transparent; white-space: nowrap; margin-left: 15px;
+    }
+    .alert-link:hover { background: var(--navy); color: #fff; }
+
+    .cards-grid { 
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; 
+    }
+    .dash-card-link { display: block; text-decoration: none; color: inherit; }
+    
+    .dash-card { 
+      background: var(--bg-card); border: 2px solid var(--border-light); border-radius: 12px; min-height: 150px; padding: 30px 20px; transition: 0.3s ease; display: flex; flex-direction: column; justify-content: center; text-align: center; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15);
+    }
+    .dash-card:hover { 
+      border-color: var(--gold); transform: translateY(-5px); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.35);
+    }
+    
+    .dash-card h3 { 
+      color: var(--navy); margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 1px; font-size: 20px; font-weight: 800;
+    }
+    .dash-card p { color: #666; margin: 0; font-size: 14px; font-weight: 600; }
+
+    #logoutBtn { 
+      padding: 10px 25px; background: transparent; border: 2px solid #ff4d4d; color: #ff4d4d; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s;
+    }
+    #logoutBtn:hover { background: #ff4d4d; color: #fff; }
+  </style>
+</head>
+<body>
+
+<div class="dash-wrap">
+  <h2 class="main-heading">Staff Dashboard</h2>
+  
+  <!-- UI Loader (Simulated) -->
+  <div id="loading" style="text-align:center; padding: 60px; color: var(--navy); font-weight: bold; font-size: 18px;">
+    🔄 Synchronising Workspace Pipeline...
+  </div>
+
+  <!-- Primary Dashboard Surface -->
+  <div id="dashboardHome" style="display:none;">
+    <div class="welcome-box" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h3 id="welcomeText">Welcome, Counselor</h3>
+        <p id="roleText" style="margin:0; color: #666; font-size: 14px; font-weight: bold;">SENIOR ASSOCIATE ACCESS LEVEL</p>
+      </div>
+      <button id="logoutBtn" type="button" onclick="alert('Mock Logout Action Execution. Session cleared successfully.')">Logout</button>
+    </div>
+
+    <!-- Administrative Operations Block -->
+    <div id="inviteSection" class="invite-box">
+      <h3>Invite New Member to Chambers</h3>
+      <div class="invite-inputs">
+        <input type="text" id="inviteName" placeholder="Full Name">
+        <input type="email" id="inviteEmail" placeholder="Email Address">
+        <button id="sendInviteBtn" onclick="executeMockInvite()">SEND INVITE</button>
+      </div>
+      <p id="inviteStatus" style="margin-top:12px; font-weight:bold; font-size: 14px; color: var(--navy);"></p>
+    </div>
+
+    <!-- Modular Workgrids -->
+    <div class="cards-grid">
+      <a class="dash-card-link" href="#" onclick="alert('Navigating to Secure Litigation & Cases Archives.')"><div class="dash-card"><h3>Cases Hub</h3><p>Litigation archives.</p></div></a>
+      <a class="dash-card-link" href="#" onclick="alert('Navigating to Chamber Brief Assignments.')"><div class="dash-card"><h3>Task Hub</h3><p>Assignments.</p></div></a>
+      <a class="dash-card-link" href="#" onclick="alert('Navigating to Corporate and Individual Client Records.')"><div class="dash-card"><h3>Client Hub</h3><p>Client records.</p></div></a>
+      <a class="dash-card-link" href="#" onclick="alert('Opening Centralized Counsel Briefing Scheduler.')"><div class="dash-card"><h3>Meetings</h3><p>Schedule briefings.</p></div></a>
+      <a class="dash-card-link" href="#" onclick="alert('Opening Court Room Filing & Repository Pipeline.')"><div class="dash-card"><h3>Court Reports</h3><p>Upload files.</p></div></a>
+    </div>
+  </div>
+</div>
+
+<!-- High-Priority Action Modal Layout -->
+<div id="alertModal" class="alert-modal-overlay">
+  <div class="alert-modal-card">
+    <div class="alert-modal-header">
+      <h3>⚠️ Action Required Alerts</h3>
+      <span class="alert-modal-close-icon" onclick="closeAlertModal()">×</span>
+    </div>
+    <div id="modalAlertsContainer" class="modal-scroll-area">
+      <!-- Injected Dynamically via UI Simulation Engine -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // UI Interactive Architecture Controls
+  window.closeAlertModal = () => {
+    document.getElementById("alertModal").classList.remove("active");
+  };
+
+  window.handleAlertClick = (docId, notificationTitle) => {
+    alert(`System confirmation: Processing resolution parameters for "${notificationTitle}". Notification marked as completed.`);
+    closeAlertModal();
+  };
+
+  function executeMockInvite() {
+    const name = document.getElementById("inviteName").value;
+    const email = document.getElementById("inviteEmail").value;
+    const status = document.getElementById("inviteStatus");
+
+    if(!name || !email) {
+      alert("Please provide all necessary registry attributes.");
+      return;
+    }
+
+    status.style.color = "var(--navy)";
+    status.innerText = "Processing automated email delivery matrix...";
+    
+    setTimeout(() => {
+      status.style.color = "var(--priority-low)";
+      status.innerText = `✅ Invitation successfully dispatched to ${name} (${email}).`;
+    }, 1200);
+  }
+
+  // Simulated Asynchronous Infrastructure Load Sequence
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      // Transition display blocks
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("dashboardHome").style.display = "block";
+
+      // Injecting sample notifications to demonstrate layout logic and alerts design beautifully
+      const container = document.getElementById("modalAlertsContainer");
+      const mockNotifications = [
+        { id: "1", title: "Urgent High Court Filing Due", message: "PRIORITY: HIGH - Written addresses for Apex Logistics Ltd must be finalized and cleared before close of window.", link: "/dignus-cases/" },
+        { id: "2", title: "Pretrial Document Review Needed", message: "PRIORITY: MEDIUM - Review fresh evidence templates submitted for the upcoming Summit Estates mediation session.", link: "/dignus-tasks/" },
+        { id: "3", title: "Retainer Structure Renewal", message: "PRIORITY: LOW - Client registry updates required for incoming quarterly billing profiles.", link: "/dignus-clients/" }
+      ];
+
+      container.innerHTML = mockNotifications.map(item => {
+        let indicatorColor = "var(--gold)";
+        if (item.message.includes("PRIORITY: HIGH")) indicatorColor = "var(--priority-high)";
+        if (item.message.includes("PRIORITY: MEDIUM")) indicatorColor = "var(--priority-medium)";
+        if (item.message.includes("PRIORITY: LOW")) indicatorColor = "var(--priority-low)";
+
+        return `
+          <div class="alert-item" style="border-left: 5px solid ${indicatorColor};">
+            <div>
+              <strong style="color:var(--navy); font-size:15px;">${item.title}</strong>
+              <br>
+              <span style="font-size:13px; color:#555; display:inline-block; margin-top:4px;">${item.message}</span>
+            </div>
+            <div class="alert-link" onclick="handleAlertClick('${item.id}', '${item.title}')">OPEN</div>
+          </div>
+        `;
+      }).join("");
+
+      // Automatically pop up your alert window overlay to show off the visual engineering
+      document.getElementById("alertModal").classList.add("active");
+
+    }, 1400); // 1.4 seconds of polished loading simulation
+  });
+</script>
+
+</body>
+</html>
